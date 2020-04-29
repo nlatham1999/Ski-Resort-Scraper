@@ -11,25 +11,31 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 
-public class LookoutPass {
+public class LookoutPass extends Mountain{
     private static boolean selectedYet = false;
+    private static boolean infoAvailable = false;
 
     private String snow24;
     private String snow48;
     private String tempAtBase;
     private String tempAtSummit;
     private Document doc = null;
+    private String news;
 
     public LookoutPass() throws IOException {
 
         selectedYet = true;
-        try {
-            new Sub().execute().get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        infoAvailable = false;
+
+//        try {
+//            new Sub().execute().get();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        new Sub().execute();
     }
 
     public static boolean isSelectedYet(){
@@ -79,6 +85,14 @@ public class LookoutPass {
         return tempAtSummit;
     }
 
+    public String getNews() {
+        return news;
+    }
+
+    public void setNews(String news) {
+        this.news = news;
+    }
+
     private class Sub extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
@@ -106,11 +120,20 @@ public class LookoutPass {
 
                 snow24 = snow24.substring(0, snow24.length() - 1);
                 snow48 = snow48.substring(0, snow48.length() - 1);
+
+                list = doc.getElementsByClass("open");
+                if(list.size() > 2){
+                    news = "";
+                    for(int i = 2; i < list.size(); i++){
+                        news += "\t" + list.get(i).text() + "\n";
+                    }
+                }
 //                tempAtBase = tempAtBase.substring(0, tempAtBase.length() - 1);
 //                tempAtSummit = tempAtSummit.substring(0, tempAtSummit.length() - 1);
 //            test(list);
             }
 
+            infoAvailable = true;
             return null;
 
         }

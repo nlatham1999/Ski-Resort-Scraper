@@ -2,6 +2,7 @@ package com.nicklatham.skireport;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import org.jsoup.Jsoup;
@@ -13,17 +14,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class SilverMountain{
+public class SilverMountain extends Mountain{
 
     private static boolean selectedYet = false;
     private static boolean infoAvailable = false;
 
-    private String snow24;
-    private String snow48;
-    private String tempAtMountainHouse;
-    private String tempAtKellogPeak;
-    private String announcements;
-    private  Document doc;
+    private static String snow24;
+    private static String snow48;
+    private static String tempAtMountainHouse;
+    private static String tempAtKellogPeak;
+    private static String announcements;
+    private static Document doc;
 
 
     public SilverMountain() throws IOException
@@ -42,6 +43,10 @@ public class SilverMountain{
         new Sub().execute();
 
 
+    }
+
+    public static boolean isInfoAvailable(){
+        return infoAvailable;
     }
 
     public static boolean isSelectedYet(){
@@ -66,7 +71,8 @@ public class SilverMountain{
 
     public String getAnnouncements(){return announcements;}
 
-    private class Sub extends AsyncTask<Void, Void, Void> {
+    //asysnc function that runs in the background
+    static private class Sub extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute () {
 
@@ -75,6 +81,7 @@ public class SilverMountain{
 
         @Override
         protected Void doInBackground (Void... params){
+//            MainActivity.setProgress(true);
             try {
                 doc = Jsoup.connect("https://www.silvermt.com/snow-report").get();
             } catch (IOException e) {
@@ -102,6 +109,7 @@ public class SilverMountain{
                 tempAtKellogPeak = "NULL";
             }
             infoAvailable = true;
+//            MainActivity.setProgress(false);
             return null;
 
         }

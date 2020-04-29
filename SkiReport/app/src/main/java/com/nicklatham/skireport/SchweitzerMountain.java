@@ -12,25 +12,28 @@ import java.io.IOException;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-public class SchweitzerMountain {
+public class SchweitzerMountain extends Mountain{
     private static boolean selectedYet = false;
+    private static boolean infoAvailable = false;
 
     private String snow24;
     private String snow48;
     private String tempAtVillage;
     private String tempAtSummit;
+    private String news;
     private Document doc = null;
 
     public SchweitzerMountain() throws IOException {
         selectedYet = true;
 
-        try {
-            new Sub().execute().get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            new Sub().execute().get();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        new Sub().execute();
 
     }
 
@@ -62,6 +65,14 @@ public class SchweitzerMountain {
         return tempAtSummit;
     }
 
+    public String getNews() {
+        return news;
+    }
+
+    public void setNews(String news) {
+        this.news = news;
+    }
+
     private class Sub extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute () {
@@ -89,8 +100,14 @@ public class SchweitzerMountain {
                 tempAtSummit = tempAtSummit.substring(0, tempAtSummit.length()-2);
                 tempAtVillage = tempAtVillage.substring(0, tempAtVillage.length()-2);
 
+
+                list = doc.select("p");
+                news = "\t" + list.get(0).text() + " " + list.get(1).text() + "\n\t" + list.get(2).text();
+
                 //test(list);
             }
+
+            infoAvailable = true;
             return null;
 
         }

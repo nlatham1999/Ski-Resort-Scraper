@@ -10,11 +10,13 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-public class FortyNineDegreesNorth {
+public class FortyNineDegreesNorth extends  Mountain{
     private static boolean selectedYet = false;
+    private static boolean infoAvailable = false;
 
     private String snow24;
     private String snow48;
+    private String temperature;
     private Document doc = null;
 
     public FortyNineDegreesNorth() throws IOException {
@@ -23,13 +25,14 @@ public class FortyNineDegreesNorth {
 
         selectedYet = true;
 
-        try {
-            new Sub().execute().get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            new Sub().execute().get();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        new Sub().execute();
     }
 
     public static boolean isSelectedYet(){
@@ -69,6 +72,14 @@ public class FortyNineDegreesNorth {
         return snow48;
     }
 
+    public String getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(String temperature) {
+        this.temperature = temperature;
+    }
+
     private class Sub extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
@@ -93,9 +104,13 @@ public class FortyNineDegreesNorth {
 
                 snow24 = snow24.substring(0, snow24.length()-1);
                 snow48 = snow48.substring(0, snow48.length()-1);
+
+                list = doc.select("h3");
+                temperature = list.get(1).text();
 //            test(list);
             }
 
+            infoAvailable = true;
             return null;
 
         }
@@ -104,5 +119,6 @@ public class FortyNineDegreesNorth {
         protected void onPostExecute(Void result) {
 
         }
+
     }
 }

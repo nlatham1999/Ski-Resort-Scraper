@@ -10,26 +10,32 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-public class MountSpokane {
+public class MountSpokane extends Mountain{
     private static boolean selectedYet = false;
+    private static boolean infoAvailable = false;
 
     private String snow24;
     private String snow48;
     private Document doc = null;
+    private String tempLodge;
+    private String tempSummit;
 
     public MountSpokane() throws IOException {
         snow24 = "";
         snow48 = "";
 
         selectedYet = true;
+        infoAvailable = false;
 
-        try {
-            new Sub().execute().get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            new Sub().execute().get();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        new Sub().execute();
     }
 
     public static boolean isSelectedYet(){
@@ -69,6 +75,14 @@ public class MountSpokane {
         return snow48;
     }
 
+    public String getTempLodge() {
+        return tempLodge;
+    }
+
+    public String getTempSummit() {
+        return tempSummit;
+    }
+
     private class Sub extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute () {
@@ -89,10 +103,14 @@ public class MountSpokane {
                 String text = list.get(2).text();
                 snow24 = query(text, "NEW SNOW IN LAST 24 HOURS:");
                 snow48 = query(text, "NEW SNOW IN LAST 48 HOURS:");
+                text = list.get(1).text();
+                tempLodge = query(text, "Lodge Temp:");
+                tempSummit = query(text, "Summit Temp:");
 
 //        test(list);
             }
 
+            infoAvailable = true;
             return null;
 
         }
